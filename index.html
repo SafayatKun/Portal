@@ -8,13 +8,9 @@
 <style>
   :root {
     --bg: var(--tg-theme-bg-color, #17212b);
-    --panel: var(--tg-theme-secondary-bg-color, #1f2a3a);
     --text: var(--tg-theme-text-color, #ffffff);
     --hint: var(--tg-theme-hint-color, #8fa4c0);
     --accent: var(--tg-theme-button-color, #6ab3f3);
-    --accent-text: var(--tg-theme-button-text-color, #ffffff);
-    --danger: #e05c5c;
-    --success: #57c98a;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; }
@@ -25,15 +21,17 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding: 24px 20px 32px;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    text-align: center;
     overflow-x: hidden;
   }
-
   .brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 28px;
+    margin-bottom: 40px;
     font-weight: 700;
     letter-spacing: 2px;
     color: var(--accent);
@@ -49,11 +47,9 @@
     font-size: 14px;
     color: #fff;
   }
-
   .portal {
-    width: 140px;
-    height: 140px;
-    margin: 0 auto 26px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     background:
       radial-gradient(circle at 50% 50%, rgba(106,179,243,0.55), transparent 60%),
@@ -62,6 +58,7 @@
     animation: pulse 3s ease-in-out infinite;
     display: grid;
     place-items: center;
+    margin-bottom: 34px;
   }
   .portal::before {
     content: "";
@@ -72,118 +69,38 @@
     animation: spin 6s linear infinite;
   }
   .portal::after {
-    content: "🌀";
-    font-size: 46px;
+    content: "ðŸŒ€";
+    font-size: 54px;
   }
   @keyframes pulse {
     0%, 100% { transform: scale(1); filter: brightness(1); }
     50% { transform: scale(1.04); filter: brightness(1.15); }
   }
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  h1 {
-    font-size: 20px;
-    line-height: 1.35;
-    text-align: center;
-    margin: 0 0 8px;
-    font-weight: 700;
-  }
-  .hint {
-    text-align: center;
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .label {
     color: var(--hint);
-    font-size: 13px;
-    margin: 0 0 26px;
+    font-size: 14px;
+    margin: 0 0 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
-
-  .answers {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-top: auto;
+  .vision {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--accent);
+    margin: 0 0 12px;
+    word-break: break-word;
+    min-height: 52px;
   }
-  .answer {
-    padding: 18px 12px;
-    border-radius: 14px;
-    border: 1.5px solid transparent;
-    background: var(--panel);
-    color: var(--text);
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
-    font-family: inherit;
-    outline: none;
-  }
-  .answer:active { transform: scale(0.97); }
-  .answer.correct {
-    background: rgba(87,201,138,0.15);
-    border-color: var(--success);
-    color: var(--success);
-  }
-  .answer.wrong {
-    background: rgba(224,92,92,0.15);
-    border-color: var(--danger);
-    color: var(--danger);
-    animation: shake 0.35s;
-  }
-  .answer:disabled {
-    opacity: 0.55;
-    cursor: default;
-  }
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-  }
-
-  .status {
-    text-align: center;
+  .instruction {
     color: var(--hint);
-    font-size: 13px;
-    min-height: 18px;
-    margin-top: 18px;
-    transition: color 0.2s ease;
+    font-size: 14px;
+    max-width: 280px;
+    line-height: 1.5;
   }
-  .status.ok { color: var(--success); font-weight: 600; }
-  .status.bad { color: var(--danger); font-weight: 600; }
-
-  .success {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    flex: 1;
-    gap: 12px;
-  }
-  .success.show { display: flex; }
-  .success .check {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background: rgba(87,201,138,0.15);
-    display: grid;
-    place-items: center;
-    font-size: 52px;
-    color: var(--success);
-    animation: pop 0.35s ease;
-  }
-  @keyframes pop {
-    0% { transform: scale(0.6); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  .success h2 { margin: 0; font-size: 20px; color: var(--success); }
-  .success p { color: var(--hint); margin: 0; font-size: 14px; }
-
-  .wrap { display: contents; }
-  .wrap.hidden { display: none; }
 </style>
 </head>
 <body>
-
-<div class="wrap" id="form-view">
   <div class="brand">
     <div class="brand-mark">Z</div>
     <span>ZYRA PORTAL</span>
@@ -191,79 +108,83 @@
 
   <div class="portal"></div>
 
-  <h1>Riven is From which Slot?</h1>
-  <p class="hint">Hint : He is Main Character of Zyra</p>
-
-  <div class="answers" id="answers"></div>
-
-  <div class="status" id="status"></div>
-</div>
-
-<div class="success" id="success-view">
-  <div class="check">✓</div>
-  <h2>Verified</h2>
-  <p>Continue your journey in Zyra.</p>
-</div>
+  <p class="label">You see, in Heaven :</p>
+  <div class="vision" id="vision-text">â€¦</div>
+  <p class="instruction">Remember this word. Return to the chat and pick the right answer.</p>
 
 <script>
-  const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-  const CORRECT = "Zyra";
-  const OPTIONS = ["Zyra", "Zyro", "Zydro", "Xyra"];
+  (function () {
+    var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 
-  const answersEl = document.getElementById("answers");
-  const statusEl = document.getElementById("status");
-  const formView = document.getElementById("form-view");
-  const successView = document.getElementById("success-view");
-
-  if (tg) {
-    tg.ready();
-    tg.expand();
-    try { tg.setHeaderColor("secondary_bg_color"); } catch (e) {}
-    try { tg.setBackgroundColor("bg_color"); } catch (e) {}
-  }
-
-  let answered = false;
-
-  function submit(answer) {
-    if (answered) return;
-    if (tg && tg.sendData) {
-      tg.sendData(JSON.stringify({ answer: answer }));
+    if (tg) {
+      try { tg.ready(); } catch (e) {}
+      try { tg.expand(); } catch (e) {}
+      try { tg.setHeaderColor("secondary_bg_color"); } catch (e) {}
+      try { tg.setBackgroundColor("bg_color"); } catch (e) {}
     }
-  }
 
-  function handleClick(answer, button) {
-    if (answered) return;
-    if (answer === CORRECT) {
-      answered = true;
-      button.classList.add("correct");
-      statusEl.textContent = "Approved. Returning to Zyra...";
-      statusEl.className = "status ok";
-      document.querySelectorAll(".answer").forEach(b => { b.disabled = true; });
-      submit(answer);
-      setTimeout(() => {
-        formView.classList.add("hidden");
-        successView.classList.add("show");
-      }, 350);
-      setTimeout(() => {
-        if (tg && tg.close) tg.close();
-      }, 1600);
-    } else {
-      button.classList.add("wrong");
-      statusEl.textContent = "That is not the answer. Try again.";
-      statusEl.className = "status bad";
-      setTimeout(() => {
-        button.classList.remove("wrong");
-      }, 400);
+    var TEXTS = ["Zyra", "Zyro", "Zydro", "Zeta"];
+    var SECRET = "z9K2wL5mP8xR3vN7tB1yF6jQ4hC0sD2g";
+
+    function extractNonce() {
+      try {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+          return String(tg.initDataUnsafe.start_param);
+        }
+      } catch (e) {}
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var v = params.get("tgWebAppStartParam") || params.get("startapp");
+        if (v) return v;
+      } catch (e) {}
+      try {
+        var hash = window.location.hash || "";
+        if (hash.indexOf("tgWebAppStartParam=") !== -1) {
+          return hash.split("tgWebAppStartParam=")[1].split("&")[0];
+        }
+      } catch (e) {}
+      return "";
     }
-  }
 
-  OPTIONS.forEach((opt) => {
-    const btn = document.createElement("button");
-    btn.className = "answer";
-    btn.textContent = opt;
-    btn.addEventListener("click", () => handleClick(opt, btn));
-    answersEl.appendChild(btn);
-  });
+    function hexToBigInt(hex) {
+      var result = 0n;
+      for (var i = 0; i < hex.length; i++) {
+        result = (result << 4n) | BigInt(parseInt(hex[i], 16));
+      }
+      return result;
+    }
+
+    function visionFromNonce(nonce) {
+      var enc = new TextEncoder();
+      var data = enc.encode(nonce + ":" + SECRET);
+      return crypto.subtle.digest("SHA-256", data).then(function (buf) {
+        var bytes = new Uint8Array(buf);
+        var hex = "";
+        for (var i = 0; i < bytes.length; i++) {
+          hex += ("00" + bytes[i].toString(16)).slice(-2);
+        }
+        var h = hexToBigInt(hex);
+        var idx = Number(h % BigInt(TEXTS.length));
+        return TEXTS[idx];
+      });
+    }
+
+    var el = document.getElementById("vision-text");
+    var nonce = extractNonce();
+
+    if (!nonce) {
+      el.textContent = "Unknown";
+      return;
+    }
+
+    visionFromNonce(nonce)
+      .then(function (vision) {
+        el.textContent = vision;
+      })
+      .catch(function () {
+        el.textContent = "Unknown";
+      });
+  })();
 </script>
 </body>
 </html>
