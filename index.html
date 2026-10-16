@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Zyra Portal</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="words.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #030a1a;
+    color: #e6f1ff;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 32px;
+    background:
+      radial-gradient(circle at 50% 0%, #0d2555 0%, #051229 45%, #030a1a 100%);
+    position: relative;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(2px 2px at 12% 18%, rgba(120,200,255,0.7) 50%, transparent 50%),
+      radial-gradient(2px 2px at 88% 12%, rgba(120,200,255,0.5) 50%, transparent 50%),
+      radial-gradient(1.5px 1.5px at 25% 72%, rgba(120,200,255,0.6) 50%, transparent 50%),
+      radial-gradient(1.5px 1.5px at 72% 88%, rgba(120,200,255,0.45) 50%, transparent 50%),
+      radial-gradient(2px 2px at 92% 62%, rgba(120,200,255,0.5) 50%, transparent 50%),
+      radial-gradient(1.5px 1.5px at 8% 45%, rgba(120,200,255,0.55) 50%, transparent 50%);
+    pointer-events: none;
+    animation: drift 8s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0% { opacity: 0.7; transform: translateY(0); }
+    100% { opacity: 1; transform: translateY(-6px); }
+  }
+
+  /* Header */
+  .header {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    position: relative;
+    z-index: 2;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: linear-gradient(145deg, #2b7fff 0%, #0b3ba5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 22px;
+    color: #fff;
+    box-shadow:
+      0 0 24px rgba(50,130,255,0.7),
+      inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+  .brand-text {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #8ecfff;
+    text-shadow: 0 0 12px rgba(80,160,255,0.7);
+  }
+  .badge {
+    padding: 8px 14px;
+    border: 1px solid rgba(80,160,255,0.5);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #8ecfff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10,25,60,0.55);
+    box-shadow: 0 0 16px rgba(50,130,255,0.3);
+  }
+
+  /* Card */
+  .card {
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid rgba(80,160,255,0.4);
+    border-radius: 22px;
+    padding: 28px 22px 24px;
+    background: linear-gradient(180deg, rgba(8,20,50,0.92) 0%, rgba(4,12,32,0.98) 100%);
+    box-shadow:
+      0 0 60px rgba(50,130,255,0.2),
+      inset 0 0 80px rgba(20,60,140,0.18);
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    backdrop-filter: blur(2px);
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #b8d4ff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  .section-title::before,
+  .section-title::after {
+    content: "";
+    width: 44px;
+    height: 1px;
+  }
+  .section-title::before {
+    background: linear-gradient(90deg, transparent, rgba(120,200,255,0.7));
+  }
+  .section-title::after {
+    background: linear-gradient(90deg, rgba(120,200,255,0.7), transparent);
+  }
+  .diamond { color: #4d8fff; font-size: 11px; }
+
+  /* Portal crystal */
+  .portal {
+    width: 240px;
+    height: 240px;
+    margin: 8px 0 22px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .portal-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(80,170,255,0.4) 0%,
+      rgba(40,110,220,0.25) 30%,
+      rgba(20,60,150,0.1) 55%,
+      transparent 75%);
+    animation: pulse 3.2s ease-in-out infinite;
+  }
+  .portal-ring::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(120,200,255,0.55);
+    box-shadow:
+      0 0 40px rgba(80,160,255,0.6),
+      inset 0 0 40px rgba(80,160,255,0.35);
+  }
+  .portal-ring::after {
+    content: "";
+    position: absolute;
+    inset: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(140,210,255,0.4);
+    box-shadow: inset 0 0 30px rgba(80,160,255,0.5);
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.85; }
+  }
+
+  .portal-core {
+    width: 130px;
+    height: 130px;
+    position: relative;
+    z-index: 2;
+  }
+  .portal-core svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 24px rgba(140,210,255,0.9))
+            drop-shadow(0 0 50px rgba(80,160,255,0.7));
+  }
+
+  .sparkle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #b8dcff;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    filter: drop-shadow(0 0 8px rgba(140,210,255,1));
+    animation: twinkle 2.4s ease-in-out infinite;
+  }
+  .sparkle.s1 { top: 2%; left: 50%; transform: translateX(-50%); }
+  .sparkle.s2 { bottom: 2%; left: 50%; transform: translateX(-50%); animation-delay: 0.6s; }
+  .sparkle.s3 { top: 50%; left: 0%; transform: translateY(-50%); animation-delay: 1.2s; }
+  .sparkle.s4 { top: 50%; right: 0%; transform: translateY(-50%); animation-delay: 1.8s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.6); }
+  }
+
+  .word-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #8ab4e8;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-transform: uppercase;
+  }
+  .word-label::before,
+  .word-label::after {
+    content: "";
+    width: 34px;
+    height: 1px;
+    background: rgba(120,200,255,0.5);
+  }
+
+  .word {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 56px;
+    font-weight: 700;
+    font-style: italic;
+    color: #ffffff;
+    text-shadow:
+      0 0 20px rgba(140,210,255,0.95),
+      0 0 45px rgba(80,160,255,0.8),
+      0 0 70px rgba(50,130,255,0.6);
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    text-align: center;
+    animation: glow 3s ease-in-out infinite;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  @keyframes glow {
+    0%, 100% { text-shadow:
+      0 0 20px rgba(140,210,255,0.95),
+      0 0 45px rgba(80,160,255,0.8),
+      0 0 70px rgba(50,130,255,0.6); }
+    50% { text-shadow:
+      0 0 25px rgba(160,220,255,1),
+      0 0 55px rgba(100,180,255,0.9),
+      0 0 85px rgba(60,140,255,0.7); }
+  }
+  .word.placeholder {
+    font-size: 32px;
+    font-style: normal;
+    opacity: 0.55;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 2px 0 20px;
+    color: #4d8fff;
+    font-size: 11px;
+  }
+  .ornament::before,
+  .ornament::after {
+    content: "";
+    width: 70px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(120,200,255,0.6), transparent);
+  }
+
+  .instructions {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #a8c4e8;
+    text-align: center;
+    margin-bottom: 22px;
+    max-width: 340px;
+  }
+
+  .cta {
+    width: 100%;
+    padding: 18px 20px;
+    border: 2px solid #3b8aff;
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(35,100,220,0.55) 0%, rgba(15,45,120,0.85) 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    transition: all 0.2s ease;
+    box-shadow:
+      0 0 36px rgba(50,130,255,0.55),
+      inset 0 0 24px rgba(80,160,255,0.25);
+    position: relative;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .cta::before,
+  .cta::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    background: #6aa8ff;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    filter: drop-shadow(0 0 8px rgba(140,210,255,1));
+    flex-shrink: 0;
+  }
+  .cta:active {
+    background: linear-gradient(180deg, rgba(50,120,240,0.75) 0%, rgba(25,65,160,1) 100%);
+    box-shadow:
+      0 0 60px rgba(80,160,255,0.9),
+      inset 0 0 30px rgba(140,210,255,0.4);
+    transform: translateY(-1px);
+  }
+  .cta.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .cta-arrow {
+    font-size: 20px;
+    transform: translateY(-1px);
+    flex-shrink: 0;
+  }
+
+  .footer-note {
+    margin-top: 18px;
+    font-size: 12px;
+    color: #6a8ab8;
+    letter-spacing: 0.4px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">
+    <div class="logo">Z</div>
+    <div class="brand-text">ZYRA PORTAL</div>
+  </div>
+  <div class="badge">
+    <span style="color:#6aa8ff;">✦</span>
+    <span>PORTAL TRIAL</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">
+    <span class="diamond">✦</span>
+    <span>Heaven Gate</span>
+    <span class="diamond">✦</span>
+  </div>
+
+  <div class="portal">
+    <div class="portal-ring"></div>
+    <div class="portal-core">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="45%" stop-color="#b8dcff"/>
+            <stop offset="100%" stop-color="#4d8fff"/>
+          </linearGradient>
+          <radialGradient id="cr" cx="50%" cy="45%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#4d8fff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="50" cy="45" r="20" fill="url(#cr)"/>
+        <path d="M50 6 L57 26 L50 38 L43 26 Z" fill="url(#cg)"/>
+        <path d="M43 26 L36 52 L50 88 L64 52 L57 26"
+              fill="none" stroke="url(#cg)" stroke-width="3"
+              stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M36 52 Q50 62 64 52"
+              fill="none" stroke="url(#cg)" stroke-width="3"/>
+        <ellipse cx="50" cy="38" rx="4" ry="8" fill="#ffffff" opacity="0.95"/>
+      </svg>
+    </div>
+    <span class="sparkle s1"></span>
+    <span class="sparkle s2"></span>
+    <span class="sparkle s3"></span>
+    <span class="sparkle s4"></span>
+  </div>
+
+  <div class="word-label">
+    <span>Your Heavenly Word</span>
+  </div>
+
+  <div class="word placeholder" id="word">Loading…</div>
+
+  <div class="ornament">✦</div>
+
+  <div class="instructions">
+    Remember this word. Return to the chat and choose the matching answer.
+  </div>
+
+  <button class="cta" id="cta">
+    <span>Word Remembered</span>
+    <span class="cta-arrow">→</span>
+  </button>
+
+  <div class="footer-note">
+    Keep this portal open while you answer
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg) {
+    try { tg.ready(); } catch (e) {}
+    try { tg.expand(); } catch (e) {}
+    if (tg.setHeaderColor) {
+      try { tg.setHeaderColor("#030a1a"); } catch (e) {}
+    }
+    if (tg.setBackgroundColor) {
+      try { tg.setBackgroundColor("#030a1a"); } catch (e) {}
+    }
+  }
+
+  // Loaded from words.js:
+  //   window.CAPTCHA_WORDS  -> array of word strings
+  //   window.CAPTCHA_SECRET -> shared secret matching bot
+  var WORDS = window.CAPTCHA_WORDS || ["Zyra", "Zyro", "Zydro", "Zeta"];
+  var SECRET = window.CAPTCHA_SECRET || "";
+
+  function getStartParam() {
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+      return tg.initDataUnsafe.start_param;
+    }
+    try {
+      var url = new URL(window.location.href);
+      var sp = url.searchParams.get("start_param")
+            || url.searchParams.get("tgWebAppStartParam");
+      if (sp) return sp;
+    } catch (e) {}
+    try {
+      var hash = window.location.hash.replace(/^#/, "");
+      var params = new URLSearchParams(hash);
+      var sp = params.get("tgWebAppStartParam")
+            || params.get("start_param");
+      if (sp) return sp;
+    } catch (e) {}
+    return null;
+  }
+
+  async function sha256Hex(text) {
+    var data = new TextEncoder().encode(text);
+    var buf = await crypto.subtle.digest("SHA-256", data);
+    var bytes = new Uint8Array(buf);
+    var hex = "";
+    for (var i = 0; i < bytes.length; i++) {
+      hex += ("0" + bytes[i].toString(16)).slice(-2);
+    }
+    return hex;
+  }
+
+  async function deriveWord(nonce) {
+    // Matches services/captcha_service.py:
+    //   raw = f"{nonce}:{secret}".encode("utf-8")
+    //   h = int(sha256(raw).hexdigest(), 16)
+    //   texts[h % len(texts)]
+    var payload = nonce + ":" + SECRET;
+    var hex = await sha256Hex(payload);
+    var h = BigInt("0x" + hex);
+    var idx = Number(h % BigInt(WORDS.length));
+    return WORDS[idx];
+  }
+
+  async function init() {
+    var wordEl = document.getElementById("word");
+    var cta = document.getElementById("cta");
+    var nonce = getStartParam();
+
+    if (!nonce) {
+      wordEl.textContent = "Portal error";
+      wordEl.classList.add("placeholder");
+      cta.classList.add("disabled");
+      return;
+    }
+
+    try {
+      var word = await deriveWord(nonce);
+      wordEl.textContent = word;
+      wordEl.classList.remove("placeholder");
+    } catch (e) {
+      wordEl.textContent = "Portal error";
+      wordEl.classList.add("placeholder");
+      cta.classList.add("disabled");
+    }
+  }
+
+  document.getElementById("cta").addEventListener("click", function () {
+    if (!tg) return;
+    try {
+      tg.sendData(JSON.stringify({ ready: true }));
+    } catch (e) {}
+    setTimeout(function () {
+      try { tg.close(); } catch (e) {}
+    }, 180);
+  });
+
+  init();
+})();
+</script>
+
+</body>
+</html>
